@@ -2,6 +2,7 @@
 import {defineProps, ref, onMounted} from 'vue';
 import axios from 'axios';
 import {router} from '@inertiajs/vue3';
+import dayjs from 'dayjs';
 
 let messageText = ref('');
 const props = defineProps({
@@ -26,8 +27,13 @@ let sendMessage = function(){
         });
     messageText = '';
 }
-onMounted(()=>{
 
+const formatDate = (dateString) => {
+    return dayjs(dateString).format('MMMM D, YYYY h:mm A'); // форматируем дату
+};
+
+onMounted(()=>{
+    console.log(props.messages)
 });
 </script>
 
@@ -44,6 +50,9 @@ onMounted(()=>{
                         <span :class="message.sender_id === props.user.id ? 'bg-blue-500 text-white p-2 rounded-lg' : 'bg-gray-300 text-black p-2 rounded-lg'">
                             {{ message.content }}
                         </span>
+                        <div class="text-sm">
+                            {{ formatDate(message.created_at) }}
+                        </div>
                     </div>
                 </div>
             </div>

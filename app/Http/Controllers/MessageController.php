@@ -14,16 +14,18 @@ class MessageController extends Controller
     }
     public function userChat(User $buddy){
         $user = auth()->user();
-        $messages1 = Message::where('sender_id', $user->id)
-            ->where('recipient_id',$buddy->id)
-            ->orderBy('created_at', 'asc')
+
+        // Получаем сообщения от пользователя к другу и от друга к пользователю
+        $messages = Message::where(function ($query) use ($user, $buddy) {
+            $query->where('sender_id', $user->id)
+                ->where('recipient_id', $buddy->id);
+        })
+            ->orWhere(function ($query) use ($user, $buddy) {
+                $query->where('sender_id', $buddy->id)
+                    ->where('recipient_id', $user->id);
+            })
+            ->orderBy('created_at') // Сортируем по дате
             ->get();
-        $messages2 = Message::where('sender_id', $buddy->id )
-            ->where('recipient_id',$user->id)
-            ->orderBy('created_at', 'asc')
-            ->get();
-        $messages = $messages1->merge($messages2);
-        $messages = $messages->sortBy('created_at');
 
         return inertia('Chat/Chat', compact('user', 'buddy', 'messages'));
     }
