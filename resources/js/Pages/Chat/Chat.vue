@@ -1,5 +1,7 @@
 <script setup>
 import {defineProps, ref, onMounted} from 'vue';
+import axios from 'axios';
+import {router} from '@inertiajs/vue3';
 
 let messageText = ref('');
 const props = defineProps({
@@ -13,14 +15,19 @@ const props = defineProps({
     },
     messages:{
         required:false,
-        type: Array,
+        type: Object,
     }
 });
 let sendMessage = function(){
-    return 0;
+    router.post(route('main.store'),
+        {content: messageText.value,
+            sender: props.user.id,
+            recipient: props.buddy.id
+        });
+    messageText = '';
 }
 onMounted(()=>{
-    console.log(props.messages);
+
 });
 </script>
 
@@ -42,7 +49,7 @@ onMounted(()=>{
             </div>
             <div class="flex justify-between items-center p-4">
                 <input v-model="messageText" type="text" class="border w-3/4 p-2 rounded" placeholder="Enter your message" />
-                <button @click="sendMessage()" class="bg-blue-500 text-white p-2 rounded">Send</button>
+                <button @click.prevent=sendMessage() class="bg-blue-500 text-white p-2 rounded">Send</button>
             </div>
         </div>
     </div>

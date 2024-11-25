@@ -28,6 +28,12 @@ class MessageController extends Controller
         return inertia('Chat/Chat', compact('user', 'buddy', 'messages'));
     }
     public function storeMessage(Request $request){
-
+        $data = $request->all();
+        Message::create([
+            'sender_id'=> $data['sender'],
+            'recipient_id'=> $data['recipient'],
+            'content'=> $data['content'],
+        ]);
+//        return redirect()->route('main.chat', $data['recipient']);
     }
 }
