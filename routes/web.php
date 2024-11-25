@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('main',[MessageController::class, 'index'])->name('main');
-    Route::get('main/{user}',[MessageController::class, 'userChat'])->name('main.chat');
+    Route::get('main/{buddy}',[MessageController::class, 'userChat'])->name('main.chat');
 });
 
 require __DIR__.'/auth.php';

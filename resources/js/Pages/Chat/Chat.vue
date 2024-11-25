@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, ref} from 'vue';
+import {defineProps, ref, onMounted} from 'vue';
 
 let messageText = ref('');
 const props = defineProps({
@@ -7,7 +7,11 @@ const props = defineProps({
         required:true,
         type: Object,
     },
-    message:{
+    buddy:{
+        required:true,
+        type: Object,
+    },
+    messages:{
         required:false,
         type: Array,
     }
@@ -15,6 +19,9 @@ const props = defineProps({
 let sendMessage = function(){
     return 0;
 }
+onMounted(()=>{
+    console.log(props.messages);
+});
 </script>
 
 <template>
@@ -22,29 +29,30 @@ let sendMessage = function(){
         <div class="w-1/2 bg-white shadow-lg rounded-lg">
             <h2 class="my-7 text-center">Chat</h2>
             <div class="p-4 h-96 overflow-y-auto" style="border-bottom: 1px solid #e5e7eb;">
-
-                <div v-if="props.messages" v-for="(message, index) in props.messages" :key="index" class="mb-2">
-                    <span class="font-bold">{{ message.sender }}:</span>
-                    <span>{{ message.text }}</span>
+                <div v-if="props.messages" v-for="(message, index) in props.messages" :key="index" class="mb-2 flex flex-col">
+                    <div :class="message.sender_id === props.user.id ? 'ml-auto text-right' : 'mr-auto text-left'">
+                        <div class="font-bold text-sm">
+                            {{ message.sender_id === props.user.id ? props.user.name : props.buddy.name }}
+                        </div>
+                        <span :class="message.sender_id === props.user.id ? 'bg-blue-500 text-white p-2 rounded-lg' : 'bg-gray-300 text-black p-2 rounded-lg'">
+                            {{ message.content }}
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div class="p-4 flex items-center">
-                <input
-                    type="text"
-                    v-model="messageText"
-                    placeholder="Type a message..."
-                    class="flex-grow border border-gray-300 rounded-l-md p-2"
-                />
-                <button
-                    @click="sendMessage"
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r-md">
-                    Send
-                </button>
+            <div class="flex justify-between items-center p-4">
+                <input v-model="messageText" type="text" class="border w-3/4 p-2 rounded" placeholder="Enter your message" />
+                <button @click="sendMessage()" class="bg-blue-500 text-white p-2 rounded">Send</button>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-
+span {
+    display: inline-block;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+}
 </style>

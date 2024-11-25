@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
              'email' => 'qwe@ya.ru',
              'password' =>Hash::make('qwe'),
          ]);
-        Message::factory(10)->create();
+        Message::factory(40)->create();
 
 //        User::factory()->create([
 //            'name' => 'Test User',

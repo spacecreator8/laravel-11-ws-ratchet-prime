@@ -16,7 +16,7 @@ const props = defineProps({
         <div class="w-1/2">
             <h2 class="my-7">Contacts</h2>
             <div v-for="user in props.users" class="my-4">
-                <a :href="route('main.chat', { user: user.id })">{{ user.email }}</a>
+                <a :href="route('main.chat', { buddy: user.id })">{{ user.email }}</a>
             </div>
         </div>
     </div>
