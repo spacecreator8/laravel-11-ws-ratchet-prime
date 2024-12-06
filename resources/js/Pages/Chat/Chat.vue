@@ -5,6 +5,7 @@ import {router} from '@inertiajs/vue3';
 import dayjs from 'dayjs';
 
 let messageText = ref('');
+
 const props = defineProps({
     user:{
         required:true,
@@ -19,12 +20,30 @@ const props = defineProps({
         type: Object,
     }
 });
+
+let conn = new WebSocket('ws://192.168.1.101:8080');
+conn.onopen = function(e) {
+    console.log("Connection established!");
+};
+
+conn.onmessage = function(e) {
+    console.log(e.data);
+};
+
 let sendMessage = function(){
     router.post(route('main.store'),
         {content: messageText.value,
             sender: props.user.id,
             recipient: props.buddy.id
         });
+    conn.send(
+        JSON.stringify({content: messageText.value,
+        flag: 'chat',
+        sender: props.user.id,
+        recipient: props.buddy.id,
+        room: props.buddy.id > props.user.id ? `${props.user.id}:${props.buddy.id}` : `${props.buddy.id}:${props.user.id}`,
+        value: 'one',
+    }));
     messageText = '';
 }
 
@@ -33,14 +52,7 @@ const formatDate = (dateString) => {
 };
 
 onMounted(()=>{
-    var conn = new WebSocket('ws://192.168.1.101:8080');
-    conn.onopen = function(e) {
-        console.log("Connection established!");
-    };
 
-    conn.onmessage = function(e) {
-        console.log(e.data);
-    };
 });
 </script>
 

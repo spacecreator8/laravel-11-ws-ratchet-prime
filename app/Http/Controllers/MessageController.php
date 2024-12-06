@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
     public function index(){
         $users = User::all();
-        return inertia('Chat/Contacts', compact('users'));
+        $user = Auth::user();
+        return inertia('Chat/Contacts', compact('users', 'user'));
     }
     public function userChat(User $buddy){
         $user = auth()->user();
