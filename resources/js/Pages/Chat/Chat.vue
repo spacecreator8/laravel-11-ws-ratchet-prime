@@ -33,7 +33,14 @@ const formatDate = (dateString) => {
 };
 
 onMounted(()=>{
-    console.log(props.messages)
+    var conn = new WebSocket('ws://192.168.1.101:8080');
+    conn.onopen = function(e) {
+        console.log("Connection established!");
+    };
+
+    conn.onmessage = function(e) {
+        console.log(e.data);
+    };
 });
 </script>
 
