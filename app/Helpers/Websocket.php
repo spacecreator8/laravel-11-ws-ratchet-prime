@@ -21,38 +21,27 @@ class Websocket implements MessageComponentInterface {
     public function onMessage(ConnectionInterface $from, $msg) {
         echo $msg . PHP_EOL;
         $msg = json_decode($msg);
-        if($msg->flag === 'service'){
+
+        if ($msg->flag === 'service') {
+            // Сохраняем только необходимые данные
             $this->rooms[$msg->room] = [$msg->user, $msg->buddy];
-            $this->users[$msg->user] = $from->resourceId;
-        }else if($msg->flag === 'chat'){
-            print_r($this->rooms);
-            print_r($this->users);
-            if(isset($this->rooms[$msg->room])) {
-                foreach($this->rooms[$msg->room] as $man) {  //тут выдает ид пользователей в комнате
-                    foreach ($this->clients as $client){
-                        if(isset($this->users[$msg->recipient])){
-                            if($client->resourceId == $this->users[$msg->recipient]){
-                                $client->send(json_encode($msg));
-                                echo "Сообщение отправленно на id - $msg->recipient";
-                            }
-                        }else{
-                            echo 'Пользователь не в сети.'. PHP_EOL;
-                        }
-
+            $this->users[$msg->user] = $from; // Сохраняем только объектов пользователей, которые активны.
+        } else if ($msg->flag === 'chat') {
+            if (isset($this->rooms[$msg->room])) {
+                $recipients = $this->rooms[$msg->room]; // Получаем список пользователей в комнате
+                foreach ($recipients as $man) {
+                    // Проверяем, существует ли пользователь и не является ли он отправителем
+                    if (isset($this->users[$man]) && $from !== $this->users[$man]) {
+                        $this->users[$man]->send($msg);
+                        echo "Сообщение отправлено на id - $msg->recipient";
+                    } else {
+                        echo 'Пользователь не в сети.' . PHP_EOL;
                     }
-
                 }
             } else {
                 echo "Room does not exist: {$msg->room}\n";
             }
         }
-
-//        echo $msg . PHP_EOL;
-//        foreach ($this->clients as $client) {
-//            if ($from !== $client) {
-//                $client->send($msg);
-//            }
-//        }
     }
 
     public function onClose(ConnectionInterface $conn) {

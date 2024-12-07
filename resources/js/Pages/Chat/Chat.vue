@@ -24,12 +24,12 @@ let room_id = props.buddy.id > props.user.id ? `${props.user.id}:${props.buddy.i
 let messageHub =JSON.parse(JSON.stringify(props.messages));
 
 let conn = new WebSocket('ws://192.168.1.101:8080');
-conn.onopen = function(e) {
+conn.onopen = function(event) {
     console.log("Connection established!");
 };
 
-conn.onmessage = function(e) {
-    console.log(e.data);
+conn.onmessage = function(event) {
+    console.log(event.data);
 };
 conn.onclose = function(event){
     console.log("Connection was broken!");
