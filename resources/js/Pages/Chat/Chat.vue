@@ -20,6 +20,8 @@ const props = defineProps({
         type: Object,
     }
 });
+let room_id = props.buddy.id > props.user.id ? `${props.user.id}:${props.buddy.id}` : `${props.buddy.id}:${props.user.id}`;
+let messageHub =JSON.parse(JSON.stringify(props.messages));
 
 let conn = new WebSocket('ws://192.168.1.101:8080');
 conn.onopen = function(e) {
@@ -29,13 +31,21 @@ conn.onopen = function(e) {
 conn.onmessage = function(e) {
     console.log(e.data);
 };
+conn.onclose = function(event){
+    console.log("Connection was broken!");
+}
 
 let sendMessage = function(){
     router.post(route('main.store'),
-        {content: messageText.value,
+        {content: messageText.value ?? 'default string',
             sender: props.user.id,
             recipient: props.buddy.id
         });
+    messageHub.push({
+        content: messageText.value,
+        sender_id: props.user.id,
+        recipient_id: props.buddy.id,
+    });
     conn.send(
         JSON.stringify({content: messageText.value,
         flag: 'chat',
@@ -44,7 +54,7 @@ let sendMessage = function(){
         room: props.buddy.id > props.user.id ? `${props.user.id}:${props.buddy.id}` : `${props.buddy.id}:${props.user.id}`,
         value: 'one',
     }));
-    messageText = '';
+    messageText.value = '';
 }
 
 const formatDate = (dateString) => {
@@ -61,7 +71,7 @@ onMounted(()=>{
         <div class="w-1/2 bg-white shadow-lg rounded-lg">
             <h2 class="my-7 text-center">Chat</h2>
             <div class="p-4 h-96 overflow-y-auto" style="border-bottom: 1px solid #e5e7eb;">
-                <div v-if="props.messages" v-for="(message, index) in props.messages" :key="index" class="mb-2 flex flex-col">
+                <div v-if="props.messages" v-for="(message, index) in messageHub" :key="index" class="mb-2 flex flex-col">
                     <div :class="message.sender_id === props.user.id ? 'ml-auto text-right' : 'mr-auto text-left'">
                         <div class="font-bold text-sm">
                             {{ message.sender_id === props.user.id ? props.user.name : props.buddy.name }}

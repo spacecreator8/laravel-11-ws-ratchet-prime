@@ -19,6 +19,9 @@ conn.onopen = function(e) {
 conn.onmessage = function(e) {
     console.log(e.data);
 };
+conn.onclose = function(event){
+    console.log("Connection was broken!");
+}
 let sendRoomData = function(buddyId){
     conn.send(JSON.stringify({
         flag: 'service',
