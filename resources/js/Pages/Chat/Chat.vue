@@ -35,6 +35,7 @@ conn.onclose = function(event){
     console.log("Connection was broken!");
 }
 
+
 let sendMessage = function(){
     router.post(route('main.store'),
         {content: messageText.value ?? 'default string',
@@ -52,7 +53,7 @@ let sendMessage = function(){
         sender: props.user.id,
         recipient: props.buddy.id,
         room: props.buddy.id > props.user.id ? `${props.user.id}:${props.buddy.id}` : `${props.buddy.id}:${props.user.id}`,
-        value: 'one',
+
     }));
     messageText.value = '';
 }
@@ -61,7 +62,17 @@ const formatDate = (dateString) => {
     return dayjs(dateString).format('MMMM D, YYYY h:mm A'); // форматируем дату
 };
 
+setTimeout(function(){
+    conn.send(JSON.stringify({
+        flag: 'service',
+        room: props.buddy.id > props.user.id ? `${props.user.id}:${props.buddy.id}` : `${props.buddy.id}:${props.user.id}`,
+        user: props.user.id,
+        buddy: props.buddy.id
+    }));
+}, 500);
+
 onMounted(()=>{
+
 
 });
 </script>
