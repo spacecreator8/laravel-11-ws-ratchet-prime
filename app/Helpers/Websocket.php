@@ -39,7 +39,8 @@ class Websocket implements MessageComponentInterface {
                         foreach($this ->clients as $client){
                             if($client->resourceId == $this->users[$man]){
                                 $client->send(json_encode($msg));
-                                echo "Сообщение отправлено на id - $msg->recipient";
+                                $link = $this->users[$man];
+                                echo "Сообщение отправлено на id - $msg->recipient , соединение - $link";
                             }
                         }
                     } else {
